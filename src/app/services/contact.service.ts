@@ -33,14 +33,14 @@ export class ContactService {
       error: () => {
         this.errorState.set('No fue posible cargar los contactos.');
         this.loadingState.set(false);
-      }
+      },
     });
   }
 
   addContact(contact: Omit<Contact, 'id'>): void {
     const newContact: Contact = {
       ...contact,
-      id: crypto.randomUUID()
+      id: globalThis.crypto?.randomUUID?.() ?? `${Date.now()}`,
     };
 
     this.updateContacts([...this.contactsState(), newContact]);
@@ -48,7 +48,7 @@ export class ContactService {
 
   updateContact(contact: Contact): void {
     const contacts = this.contactsState().map((currentContact) =>
-      currentContact.id === contact.id ? contact : currentContact
+      currentContact.id === contact.id ? contact : currentContact,
     );
 
     this.updateContacts(contacts);
@@ -60,21 +60,48 @@ export class ContactService {
   }
 
   private readFromStorage(): Contact[] | null {
-    const savedContacts = localStorage.getItem(this.storageKey);
-
-    if (!savedContacts) {
-      return null;
-    }
-
     try {
-      return JSON.parse(savedContacts) as Contact[];
-    } catch {
+      const savedContacts = localStorage.getItem(this.storageKey);
+
+      if (!savedContacts) {
+        return null;
+      }
+
+      const parsedContacts: unknown = JSON.parse(savedContacts);
+
+      if (this.isContactArray(parsedContacts)) {
+        return parsedContacts;
+      }
+
       localStorage.removeItem(this.storageKey);
+      return null;
+    } catch {
       return null;
     }
   }
 
   private saveToStorage(contacts: Contact[]): void {
-    localStorage.setItem(this.storageKey, JSON.stringify(contacts));
+    try {
+      localStorage.setItem(this.storageKey, JSON.stringify(contacts));
+    } catch {
+      // The in-memory list remains usable when browser storage is unavailable.
+    }
+  }
+
+  private isContactArray(value: unknown): value is Contact[] {
+    return (
+      Array.isArray(value) &&
+      value.every(
+        (contact) =>
+          typeof contact === 'object' &&
+          contact !== null &&
+          typeof contact.id === 'string' &&
+          typeof contact.firstName === 'string' &&
+          typeof contact.lastName === 'string' &&
+          typeof contact.email === 'string' &&
+          Array.isArray(contact.phones) &&
+          contact.phones.every((phone: unknown) => typeof phone === 'string'),
+      )
+    );
   }
 }

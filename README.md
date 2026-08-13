@@ -1,59 +1,56 @@
-# FrontendAngularPruebaATL
+# Agenda de contactos
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.1.3.
+Aplicación pequeña desarrollada como prueba técnica de frontend. Permite consultar, crear y editar contactos desde una interfaz responsive.
 
-## Development server
+## Funcionalidades
 
-To start a local development server, run:
+- Carga inicial de contactos desde `public/data/contacts.json`, simulando una API.
+- Persistencia de cambios en `localStorage`.
+- Creación y edición de contactos.
+- Cancelación de cambios sin modificar la información guardada.
+- Formulario reactivo con validación.
+- Uno o múltiples números de teléfono por contacto.
+- Estados de carga, error y lista vacía.
+- Pruebas unitarias del servicio y del formulario.
 
-```bash
-ng serve
-```
+## Tecnologías
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+- Angular 22
+- TypeScript
+- Tailwind CSS 4
+- Reactive Forms
+- Vitest
 
-## Code scaffolding
+## Ejecutar localmente
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
+Se necesita una versión de Node.js compatible con Angular 22 y npm.
 
 ```bash
-ng build
+npm install
+npm start
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+La aplicación estará disponible en `http://localhost:4200`.
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## Comandos
 
 ```bash
-ng test
+npm start          # Servidor de desarrollo
+npm run build      # Compilación de producción
+npm test -- --watch=false  # Pruebas unitarias en una sola ejecución
 ```
 
-## Running end-to-end tests
+## Estructura principal
 
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
+```text
+src/app/
+├── components/
+│   ├── contact-form/   # Formulario reactivo de creación y edición
+│   └── contact-list/   # Presentación de los contactos
+├── models/             # Contratos de datos
+└── services/           # Carga, estado y persistencia
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## Persistencia
 
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+En la primera visita, el servicio obtiene los datos del archivo JSON y los guarda bajo la clave `contacts` de `localStorage`. Las siguientes visitas recuperan esa copia local. Crear o editar un contacto actualiza tanto el estado de la aplicación como el almacenamiento del navegador.
