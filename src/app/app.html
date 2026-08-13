@@ -16,14 +16,32 @@
   </header>
 
   <section class="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-    <div class="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center shadow-sm">
-      <div class="mx-auto flex size-12 items-center justify-center rounded-full bg-indigo-50 text-2xl" aria-hidden="true">
-        👥
+    @if (isLoading()) {
+      <div class="py-16 text-center" role="status">
+        <div class="mx-auto size-8 animate-spin rounded-full border-4 border-indigo-100 border-t-indigo-600"></div>
+        <p class="mt-4 text-sm text-slate-500">Cargando contactos...</p>
       </div>
-      <h2 class="mt-4 text-lg font-semibold">Tu lista de contactos aparecerá aquí</h2>
-      <p class="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
-        En el siguiente paso cargaremos los datos iniciales y conectaremos el almacenamiento local.
-      </p>
-    </div>
+    } @else if (error()) {
+      <div class="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700" role="alert">
+        {{ error() }}
+      </div>
+    } @else if (contacts().length) {
+      <div class="mb-5 flex items-center justify-between">
+        <p class="text-sm text-slate-500">
+          {{ contacts().length }} {{ contacts().length === 1 ? 'contacto' : 'contactos' }}
+        </p>
+      </div>
+      <app-contact-list [contacts]="contacts()" />
+    } @else {
+      <div class="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center shadow-sm">
+        <div class="mx-auto flex size-12 items-center justify-center rounded-full bg-indigo-50 text-2xl" aria-hidden="true">
+          👥
+        </div>
+        <h2 class="mt-4 text-lg font-semibold">Todavía no tienes contactos</h2>
+        <p class="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
+          Usa el botón “Agregar contacto” para registrar el primero.
+        </p>
+      </div>
+    }
   </section>
 </main>
